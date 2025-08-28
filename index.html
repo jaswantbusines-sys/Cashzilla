@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CashZilla — Professional Single File</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: linear-gradient(135deg,#0b1020 0%, #0f1f3a 60%, #081226 100%);
+  --card1: linear-gradient(135deg,#7c3aed,#4f46e5);
+  --card2: linear-gradient(135deg,#06b6d4,#06b6a4);
+  --accent:#ffd166;
+  --glass: rgba(255,255,255,0.04);
+  --muted: rgba(255,255,255,0.7);
+}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial}
+body{margin:0;min-height:100vh;background:var(--bg);color:#fff}
+.container{max-width:1080px;margin:28px auto;padding:22px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{background:var(--card1);padding:12px 16px;border-radius:12px;font-weight:900;color:#fff;box-shadow:0 8px 30px rgba(79,70,229,0.12)}
+.title{font-weight:800;font-size:18px}
+.nav{display:flex;gap:8px}
+.tab{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;cursor:pointer;transition:all .18s}
+.tab:hover{transform:translateY(-3px)}
+.tab.active{background:linear-gradient(90deg,#06b6d4,#7c3aed);color:#021;box-shadow:0 8px 30px rgba(6,182,212,0.08)}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+.card{background:var(--glass);padding:16px;border-radius:14px;box-shadow:0 6px 28px rgba(2,6,23,0.6)}
+.stat{display:flex;gap:12px;align-items:center}
+.stat .num{font-weight:900;font-size:22px}
+.small{font-size:13px;color:var(--muted)}
+.btn{padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,#06b6d4,#4f46e5);color:#012;cursor:pointer;border:none;font-weight:800;transition:transform .12s}
+.btn:hover{transform:translateY(-3px)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+.section{margin-bottom:12px}
+.input{width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:#fff}
+.list{display:flex;flex-direction:column;gap:12px}
+.video{display:flex;gap:12px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+.thumb{width:140px;height:84px;border-radius:8px;overflow:hidden}
+.progress{height:12px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden}
+.progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#ff7a18)}
+.notice{font-size:13px;color:var(--muted)}
+.footer{margin-top:16px;color:rgba(255,255,255,0.55);font-size:13px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,23,0.6);z-index:40}
+.modal.open{display:flex}
+.modal-card{width:min(980px,95%);background:#000;border-radius:12px;padding:14px}
+.close{background:#111;padding:6px 10px;border-radius:8px;color:#fff;border:none}
+.level-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-weight:800}
+@media(max-width:980px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">CashZilla</div>
+      <div>
+        <div class="title">CashZilla — Professional Dashboard</div>
+        <div class="small">Earnings • Refer • Watch • Levels • Withdraw</div>
+      </div>
+    </div>
+    <div class="nav" id="nav">
+      <div class="tab active" data-tab="home">Home</div>
+      <div class="tab" data-tab="refer">Refer</div>
+      <div class="tab" data-tab="watch">Watch</div>
+      <div class="tab" data-tab="withdraw">Withdraw</div>
+      <div class="tab" data-tab="admin">Admin</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <!-- Home -->
+      <div class="card section" id="home" style="display:block">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="stat"><div class="num" id="totalE">₹0</div><div style="margin-left:10px" class="small">Total Earnings</div></div>
+            <div class="small">Today: <span id="todayE">₹0</span> • Level: <span id="levelLabel">1</span></div>
+          </div>
+          <div style="text-align:right">
+            <div class="small">Referral Code</div>
+            <div class="level-pill" id="myCode">—</div>
+          </div>
+        </div>
+
+        <hr style="border:none;height:1px;background:rgba(255,255,255,0.04);margin:12px 0">
+
+        <div class="list">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <strong>Quick Actions</strong>
+                <div class="small">Daily login, share, refer, watch videos</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <button class="btn" id="dailyBtn">Daily Login: ₹20</button>
+                <button class="btn" id="shareBtn">Share on WhatsApp (₹480)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <strong>Recent Activity</strong>
+            <div id="activity" class="small" style="margin-top:8px">No activity yet.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Refer -->
+      <div class="card section" id="refer" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h3>Refer & Earn</h3>
+            <div class="small">₹250 per referral — share your referral link so new users can sign up.</div>
+          </div>
+          <div style="width:360px">
+            <input id="refInput" class="input" placeholder="Enter referral code to use (if you have)" />
+            <div style="height:10px"></div>
+            <button class="btn" id="applyRef">Apply Code</button>
+          </div>
+        </div>
+
+        <hr style="border:none;height:1px;background:rgba(255,255,255,0.04);margin:12px 0">
+        <div>
+          <strong>Your Referral Link</strong>
+          <div class="small" style="margin-top:6px">Share this link — when a new user registers using your code, you'll receive ₹250.</div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <input id="refLink" class="input" readonly />
+            <button class="btn ghost" id="copyRef">Copy</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Watch -->
+      <div class="card section" id="watch" style="display:none">
+        <h3>Watch & Earn</h3>
+        <div class="small">Har video 6 minute — ek baar claim per video. Agar aap tab switch karoge ya modal close karoge toh reward nahi milega.</div>
+        <div class="list" id="videosList" style="margin-top:12px"></div>
+      </div>
+
+      <!-- Withdraw -->
+      <div class="card section" id="withdraw" style="display:none">
+        <h3>Withdraw</h3>
+        <div class="small">Minimum Withdrawal: <b>₹5000</b></div>
+        <div style="margin-top:8px">
+          <div class="small">Available Balance: <strong id="availBal">₹0</strong></div>
+          <div style="height:8px"></div>
+
+          <label class="small">Enter your UPI ID (will be saved for future withdrawals)</label>
+          <input id="userUpi" class="input" placeholder="example@bank" />
+
+          <div style="height:8px"></div>
+          <input id="withdrawAmt" class="input" placeholder="Enter amount to withdraw" />
+          <div style="height:8px"></div>
+          <button class="btn" id="withdrawBtn">Request Withdraw</button>
+        </div>
+      </div>
+
+      <!-- Admin -->
+      <div class="card section" id="admin" style="display:none">
+        <h3>Admin (Frontend Only)</h3>
+        <div class="small">Local stats and simulated actions.</div>
+        <div style="margin-top:8px" class="admin-rows">
+          <div>Referral codes generated: <span id="adminCodes">0</span></div>
+          <div>Total simulated signups: <span id="adminSignups">0</span></div>
+          <div>Last action: <span id="adminLast">—</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right sidebar -->
+    <div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="small">Wallet Balance</div>
+            <div class="num" id="wallet">₹0</div>
+          </div>
+          <div>
+            <div class="small">Withdraw Status</div>
+            <div id="withdrawStatus" class="small">Locked</div>
+          </div>
+        </div>
+        <hr style="border:none;height:1px;background:rgba(255,255,255,0.04);margin:12px 0">
+        <div>
+          <strong>Level Progress</strong>
+          <div class="small">Reach Level 4 to unlock withdrawals</div>
+          <div style="height:8px"></div>
+          <div class="progress"><i id="levelBar"></i></div>
+          <div style="height:8px"></div>
+          <div class="small">Requirements: watch 10 videos, refer 2 people, 5 signups (scales by level)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">Built for CashZilla • Made with ❤️</div>
+</div>
+
+<!-- Modal for YouTube -->
+<div class="modal" id="modal"><div class="modal-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div id="modalTitle">YouTube Player</div><button class="close" id="closeModal">Close</button></div><div style="position:relative;padding-top:56.25%"><iframe id="ytframe" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media" src="" allowfullscreen></iframe></div></div></div>
+
+<script>
+// ------------------ Config & Data ------------------
+const CONFIG = {
+  referralReward: 250,
+  dailyReward: 20,
+  watchReward: 100,
+  shareBonus: 480,
+  watchTimeSecs: 6*60,
+  withdrawMin: 5000
+};
+
+const YT_VIDEOS = [
+  {id:'f2SCN87882g', title:'CashZilla — Video 1'},
+  {id:'cdtHYN8uulc', title:'CashZilla — Video 2'}
+];
+
+const LS = { data: 'cz_user_data' };
+
+// ------------------ User (local-only) ------------------
+let user = loadUser();
+function defaultUser(){
+  const code = 'CZ'+Math.floor(100000+Math.random()*900000);
+  return {
+    code,
+    wallet:0,
+    total:0,
+    today:0,
+    level:1,
+    watched: {},
+    watchCount:0,
+    referrals:0,
+    signups:0,
+    linkClicks:0,
+    activity:[],
+    upi:''
+  }
+}
+function loadUser(){ try{ const raw = localStorage.getItem(LS.data); if(raw) return JSON.parse(raw);}catch(e){} const u=defaultUser(); saveUser(u); return u; }
+function saveUser(){ localStorage.setItem(LS.data, JSON.stringify(user)); }
+function addActivity(msg){ user.activity.unshift({t:Date.now(),msg}); if(user.activity.length>50) user.activity.pop(); saveUser(); renderActivity(); }
+
+// ------------------ UI refs ------------------
+const tabs = document.querySelectorAll('.tab');
+const sections = {home:document.getElementById('home'), refer:document.getElementById('refer'), watch:document.getElementById('watch'), withdraw:document.getElementById('withdraw'), admin:document.getElementById('admin')};
+const myCodeEl = document.getElementById('myCode');
+const totalE = document.getElementById('totalE');
+const walletEl = document.getElementById('wallet');
+const todayE = document.getElementById('todayE');
+const levelLabel = document.getElementById('levelLabel');
+const refLink = document.getElementById('refLink');
+const copyRef = document.getElementById('copyRef');
+const applyRef = document.getElementById('applyRef');
+const refInput = document.getElementById('refInput');
+const dailyBtn = document.getElementById('dailyBtn');
+const shareBtn = document.getElementById('shareBtn');
+const videosList = document.getElementById('videosList');
+const activityEl = document.getElementById('activity');
+const availBal = document.getElementById('availBal');
+const withdrawBtn = document.getElementById('withdrawBtn');
+const withdrawStatus = document.getElementById('withdrawStatus');
+const levelBar = document.getElementById('levelBar');
+const adminCodes = document.getElementById('adminCodes');
+const adminSignups = document.getElementById('adminSignups');
+const adminLast = document.getElementById('adminLast');
+const userUpiEl = document.getElementById('userUpi');
+
+// modal
+const modal = document.getElementById('modal');
+const ytframe = document.getElementById('ytframe');
+const closeModal = document.getElementById('closeModal');
+
+// ------------------ Init
+function renderAll(){
+  myCodeEl.textContent = user.code;
+  totalE.textContent = '₹'+user.total;
+  walletEl.textContent = '₹'+user.wallet;
+  todayE.textContent = '₹'+user.today;
+  levelLabel.textContent = user.level;
+  refLink.value = location.origin + location.pathname + '?ref=' + user.code;
+  availBal.textContent = '₹'+user.wallet;
+  withdrawStatus.textContent = (user.level>=4 && user.wallet>=CONFIG.withdrawMin)? 'Eligible' : 'Locked';
+  updateLevelBar();
+  adminCodes.textContent = 1;
+  adminSignups.textContent = user.signups;
+  adminLast.textContent = user.activity[0] ? user.activity[0].msg : '—';
+  userUpiEl.value = user.upi || '';
+  renderActivity(); renderVideos();
+}
+function renderActivity(){ if(!user.activity.length){ activityEl.textContent='No activity yet.'; return } activityEl.innerHTML = user.activity.slice(0,10).map(a=>`<div>• ${a.msg} <span style="color:rgba(255,255,255,0.55);font-size:12px">(${new Date(a.t).toLocaleString()})</span></div>`).join(''); }
+function updateLevelBar(){ const base = {watch:10,ref:2,signups:5}; const need = {watch: base.watch * (Math.pow(1.5, user.level-2) || 1), ref: base.ref * (Math.pow(1.5, user.level-2) || 1), signups: base.signups * (Math.pow(1.5, user.level-2) || 1)}; const w = Math.min(user.watchCount/need.watch,1); const r = Math.min(user.referrals/need.ref,1); const s = Math.min(user.signups/need.signups,1); const pct = Math.round(((w+r+s)/3)*100); levelBar.style.width = pct+'%'; }
+
+// Tabs
+tabs.forEach(t=>t.addEventListener('click', e=>{ tabs.forEach(x=>x.classList.remove('active')); e.currentTarget.classList.add('active'); const tab = e.currentTarget.dataset.tab; Object.keys(sections).forEach(k=>sections[k].style.display = (k===tab? 'block':'none')); }));
+
+// Referral (only signup reward remains)
+copyRef.addEventListener('click', ()=>{ navigator.clipboard?.writeText(refLink.value); alert('Referral link copied'); });
+applyRef.addEventListener('click', ()=>{ const code = refInput.value.trim(); if(!code) return alert('Enter code'); if(code===user.code) return alert('Cannot apply your own code'); // simulate signup using code (frontend-only)
+  user.signups +=1; user.wallet += CONFIG.referralReward; user.total += CONFIG.referralReward; addActivity('Referral signup: +₹'+CONFIG.referralReward+' via '+code); saveUser(); renderAll(); alert('Referral applied — ₹'+CONFIG.referralReward+' added'); });
+
+// Daily
+dailyBtn.addEventListener('click', ()=>{ const last = localStorage.getItem('cz_daily'); const todayStr = new Date().toDateString(); if(last===todayStr) return alert('Aaj ka daily already liya hua hai'); localStorage.setItem('cz_daily', todayStr); user.wallet += CONFIG.dailyReward; user.total += CONFIG.dailyReward; user.today += CONFIG.dailyReward; addActivity('Daily login: +₹'+CONFIG.dailyReward); saveUser(); renderAll(); alert('Daily reward added ₹'+CONFIG.dailyReward); });
+
+// WhatsApp Share (opens WA with prefilling message + credits once)
+shareBtn.addEventListener('click', ()=>{
+  if(localStorage.getItem('cz_shared_whatsapp')){ alert('Aapne pehle hi WhatsApp share bonus claim kar liya hai.'); return; }
+  const referLinkVal = refLink.value || (location.origin + location.pathname + '?ref=' + user.code);
+  const msg = `🔥 Join CashZilla and earn money! Use my referral code: ${user.code} \nRegister here -> ${referLinkVal}`;
+  const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+  window.open(waUrl, '_blank');
+  localStorage.setItem('cz_shared_whatsapp', '1');
+  user.wallet += CONFIG.shareBonus; user.total += CONFIG.shareBonus; addActivity('Shared on WhatsApp: +₹'+CONFIG.shareBonus); saveUser(); renderAll(); alert('₹'+CONFIG.shareBonus+' credited for sharing on WhatsApp.');
+});
+
+// Watch system
+let activeWatch = null;
+function renderVideos(){ videosList.innerHTML = ''; YT_VIDEOS.forEach(v=>{ const claimed = user.watched[v.id]; const div = document.createElement('div'); div.className='video'; div.innerHTML = ` <div class="thumb"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" style="width:100%;height:100%;object-fit:cover"></div> <div style="flex:1"> <div style="font-weight:800">${v.title}</div> <div class="small">Reward: ₹${CONFIG.watchReward} • 6 minutes required</div> <div style="height:8px"></div> <div class="progress"><i id="p_${v.id}" style="width:${claimed?100:0}%"></i></div> </div> <div> <button class="btn" id="start_${v.id}" ${claimed? 'disabled':''}>${claimed? 'Claimed':'Start Watching'}</button> </div>`; videosList.appendChild(div); setTimeout(()=>{ const btn = document.getElementById('start_'+v.id); btn?.addEventListener('click', ()=>startWatch(v)); },10); }); }
+function startWatch(v){ if(user.watched[v.id]) return alert('Already claimed'); if(activeWatch) return alert('Ek video already chal rha hai — pehle use complete karo'); activeWatch = {id:v.id, remaining: CONFIG.watchTimeSecs, interval:null, title:v.title}; ytframe.src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&controls=1`; modal.classList.add('open'); addActivity('Started watching: '+v.title); activeWatch.interval = setInterval(()=>{ activeWatch.remaining -=1; const pct = Math.round((1 - activeWatch.remaining/CONFIG.watchTimeSecs)*100); const bar = document.getElementById('p_'+v.id); if(bar) bar.style.width = pct+'%'; if(activeWatch.remaining<=0){ clearInterval(activeWatch.interval); completeWatch(v); } },1000); document.addEventListener('visibilitychange', watchVisibility); }
+function completeWatch(v){ user.watched[v.id] = true; user.wallet += CONFIG.watchReward; user.total += CONFIG.watchReward; user.watchCount +=1; addActivity('Watched completed: +₹'+CONFIG.watchReward+' ('+v.title+')'); saveUser(); renderAll(); alert('Watch completed! Reward added ₹'+CONFIG.watchReward); activeWatch = null; modal.classList.remove('open'); ytframe.src=''; document.removeEventListener('visibilitychange', watchVisibility); }
+function failWatch(reason){ if(activeWatch && activeWatch.interval) clearInterval(activeWatch.interval); addActivity('Watch failed: '+reason); activeWatch = null; modal.classList.remove('open'); ytframe.src=''; document.removeEventListener('visibilitychange', watchVisibility); renderAll(); alert('Watch failed: '+reason); }
+function watchVisibility(){ if(document.visibilityState==='hidden'){ failWatch('Tab switched or minimized before completion'); } }
+closeModal.addEventListener('click', ()=>{ if(activeWatch){ failWatch('Modal closed before timer finished'); } else { modal.classList.remove('open'); ytframe.src=''; } });
+
+// Withdraw
+withdrawBtn.addEventListener('click', ()=>{
+  // save UPI
+  const upi = (userUpiEl.value || '').trim();
+  if(upi) { user.upi = upi; saveUser(); }
+  const amt = Number(document.getElementById('withdrawAmt').value || 0);
+  if(!amt || amt<=0) return alert('Enter valid amount');
+  if(amt > user.wallet) return alert('Insufficient balance');
+  if(user.level < 4) return alert('Reach Level 4 to withdraw');
+  if(user.wallet < CONFIG.withdrawMin) return alert('Minimum withdrawal amount ₹'+CONFIG.withdrawMin);
+  if(!user.upi) return alert('Please enter your UPI ID first');
+  // simulate withdraw request
+  user.wallet -= amt; user.total -= amt; addActivity('Withdraw requested: ₹'+amt+' to UPI '+user.upi); saveUser(); renderAll(); alert('Withdraw request submitted for ₹'+amt+' to UPI '+user.upi);
+});
+
+// Level logic (automatic)
+function checkLevel(){ const base = {watch:10,ref:2,signups:5}; const reqs = [null,{watch:0,ref:0,signups:0},{watch:base.watch, ref:base.ref, signups:base.signups},{watch:Math.ceil(base.watch*1.5), ref:Math.ceil(base.ref*1.5), signups:Math.ceil(base.signups*1.5)},{watch:base.watch*2, ref:base.ref*2, signups:base.signups*2}]; for(let L=4;L>user.level;L--){ const r=reqs[L]; if(r && user.watchCount>=r.watch && user.referrals>=r.ref && user.signups>=r.signups){ user.level = L; addActivity('Level up! Reached Level '+L); saveUser(); renderAll(); } } }
+setInterval(()=>{ checkLevel(); },2000);
+
+// Start
+renderAll();
+
+</script>
+</body>
+</html>
